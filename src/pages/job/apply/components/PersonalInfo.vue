@@ -1,6 +1,6 @@
 <template>
   <ApplyInfoBlock :title="title">
-    ssssssddd
+    
   </ApplyInfoBlock>
 </template>
 

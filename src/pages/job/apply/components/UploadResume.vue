@@ -6,9 +6,10 @@
         <span class="red mgl4">*</span>
       </label>
       <div>
-        <a-upload name="file" :multiple="true" :action="''">
+        <a-upload name="file" :action="''" :customRequest="showUploadResumeChoose" accept=".pdf" :show-upload-list="false">
           <a-button>
-            <upload-outlined />上传简历
+            <upload-outlined />
+            <span>{{Object.keys(resumeFile).length?resumeFile.fileName:'上传简历'}}</span>
           </a-button>
         </a-upload>
         <span class="tips">仅支持pdf格式文件</span>
@@ -29,6 +30,7 @@
 </template>
 
 <script>
+import { uploadResume } from "@/api/job";
 import { UploadOutlined } from "@ant-design/icons-vue";
 import { ref, toRefs, reactive } from "vue";
 import ApplyInfoBlock from "./ApplyInfoBlock";
@@ -44,12 +46,24 @@ export default {
       default: ""
     }
   },
-  setup() {
+  setup(props, context) {
     //beforeCreate,created生命周期
     //初始化数据reactive相当于observer()对传入数据处理为可观测的
-    const state = reactive({});
+    const state = reactive({
+      resumeFile: {}
+    });
+    function showUploadResumeChoose(data) {
+      console.log(data);
+      const formData = new FormData();
+      formData.append("file", data.file);
+      let params;
+      uploadResume(formData)
+        .then(res => {})
+        .catch(err => {});
+    }
     return {
-      ...toRefs(state)
+      ...toRefs(state),
+      showUploadResumeChoose
     };
   }
 };
@@ -66,7 +80,7 @@ export default {
   .tips {
     font-size: 12px;
   }
-  /deep/ .ant-upload {
+  ::v-deep(.ant-upload) {
     margin: 12px 0;
     border-radius: 4px;
     .ant-btn {
@@ -74,7 +88,7 @@ export default {
       color: #fff;
       border: 1px solid @priColor;
       border-radius: 4px;
-      span{
+      span {
         color: #fff;
       }
     }
