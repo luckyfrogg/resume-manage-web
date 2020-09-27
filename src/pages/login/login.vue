@@ -3,11 +3,16 @@
     <a-row>
       <a-col :xs="24" :sm="24" :md="12" :lg="16" :xl="16"></a-col>
       <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="8">
-        <a-form ref="ruleForm" :model="state.ruleForm" :rules="state.rules" class="form-wrap">
+        <a-form ref="loginRef" :model="state.ruleForm" :rules="state.rules" class="form-wrap">
           <div class="title">您好！</div>
           <div class="title-tips">欢迎登录简历管理系统</div>
           <a-form-item has-feedback name="name" class="form-item">
-            <a-input placeholder="工号/工作邮箱" v-model:value="state.ruleForm.name" autocomplete="on">
+            <a-input
+              placeholder="工号/工作邮箱"
+              v-model:value="state.ruleForm.name"
+              autocomplete="off"
+              @focus.stop="resetValidate"
+            >
               <template v-slot:prefix>
                 <UserOutlined style="color:rgba(0,0,0,.25)" />
               </template>
@@ -31,8 +36,9 @@
               class="btn-login"
               :loading="state.loadingStatus===1"
             >
-              <template v-slot:icon v-if="state.loadingStatus===2">
-                <CheckOutlined />
+              <template v-slot:icon>
+                <CheckOutlined v-if="state.loadingStatus===2" />
+                <CloseOutlined v-if="state.loadingStatus===3" />
               </template>
               {{loginBtnText}}
             </a-button>
@@ -49,22 +55,30 @@
   </div>
 </template>
 <script>
-import { ref, unref, toRefs, reactive, computed } from "vue";
+import { doLogin } from "@/api/login";
+import md5 from 'js-md5';
+import { ref, unref, toRefs, reactive, computed, onMounted } from "vue";
 import {
   UserOutlined,
   LockOutlined,
-  CheckOutlined
+  CheckOutlined,
+  CloseOutlined
 } from "@ant-design/icons-vue";
 export default {
   name: "Login",
   components: {
     UserOutlined,
     LockOutlined,
-    CheckOutlined
+    CheckOutlined,
+    CloseOutlined
   },
-  setup() {
-    let checkName = async (rule, value, callback) => {
-      console.log();
+  setup(props, conetxt) {
+    onMounted(() => {
+      // 在渲染完成后, 这个 div DOM 会被赋值给 root ref 对象
+      console.log(loginRef.value); // <div/>
+    });
+    const loginRef = ref(null);
+    async function checkName(rule, value, callback) {
       if (!value) {
         return Promise.reject("工号/工作邮箱不能为空！");
       }
@@ -74,59 +88,82 @@ export default {
         return Promise.reject("工号/工作邮箱格式不正确！");
       }
       return Promise.resolve();
-    };
-    
+    }
+
     const state = reactive({
-      loadingStatus: 0,//0：未点击登录，1：登录中，2：登录成功，2s跳转
+      loadingStatus: 0, //0：未点击登录，1：登录中，2：登录成功，2s跳转
       ruleForm: {
         name: "",
         password: ""
       },
       rules: {
-        name: [{ validator: checkName, trigger: "blur" }],
+        name: [{ validator: checkName, whitespace: true, trigger: "blur" }],
         password: [
           {
             required: true,
             message: "密码不能为空！",
+            whitespace: true,
             trigger: "change"
           }
         ]
       }
     });
-    const loginBtnText=computed(()=>{
-        let text=''
-        console.log('state.loadingStatus',state.loadingStatus);
-        switch (state.loadingStatus) {
-            case 0:
-                text='登录'
-                break;
-            case 1:
-                text='登录中'
-                break;
-            case 2:
-                text='登录成功'
-                break;
-        }
-        console.log('te=>',text)
-        return text
-    })
-    function handleClickLogin() {
-      state.loadingStatus = 1;
+    const loginBtnText = computed(() => {
+      let text = "";
+      console.log("state.loadingStatus", state.loadingStatus);
+      switch (state.loadingStatus) {
+        case 0:
+          text = "登录";
+          break;
+        case 1:
+          text = "登录中";
+          break;
+        case 2:
+          text = "登录成功";
+          break;
+        case 3:
+          text = "登录失败";
+          break;
+      }
+      return text;
+    });
+    function resetValidate() {
+      loginRef.value.clearValidate();
+    }
+    async function handleClickLogin() {
+      //点击登录
+      loginRef.value
+        .validate()
+        .then(async ruleForm => {
+          state.loadingStatus = 1;
+          console.log("ruleForm=>", ruleForm);
+        //   let md5pass = md5
+          let loginRes = await doLogin()
+            .then(res => {
+              state.loadingStatus = 2;
+            })
+            .catch(err => {
+              state.loadingStatus = 3;
+            });
+          setTimeout(() => {
+            state.loadingStatus = 0;
+          }, 1800);
+        })
+        .catch(error => {
+          console.log("error", error);
+        });
+
       console.log(state.loadingStatus);
-      setTimeout(() => {
-        state.loadingStatus = 2;
-         setTimeout(() => {
-        state.loadingStatus = 0;
-      }, 1000);
-      }, 3000);
-     
     }
     function forgetPassword() {
       console.log(2);
     }
+
     return {
       state,
+      loginRef,
       loginBtnText,
+      resetValidate,
       handleClickLogin,
       forgetPassword
     };
@@ -148,7 +185,10 @@ export default {
       font-size: 54px;
       font-weight: 500;
       color: #0e121a;
+      animation: smoothUp 2s ease forwards;
+      //   transition: all 2s ease;
     }
+
     .title-tips {
       margin-top: 24px;
       margin-bottom: 24px;
@@ -157,6 +197,22 @@ export default {
       color: #0e121a;
       text-overflow: ellipsis;
       white-space: nowrap;
+      opacity: 0;
+      transform: translateY(100px);
+      animation: smoothUp 1.8s 0.2s ease forwards;
+    }
+    @keyframes smoothUp {
+      0% {
+        opacity: 0;
+        transform: translateY(100px);
+      }
+      20% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     .form-item {
       position: relative;
