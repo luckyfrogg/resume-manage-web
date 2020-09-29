@@ -1,22 +1,22 @@
 import axios from 'axios'
 import router from '@/router'
+import {message} from 'ant-design-vue';
 import qs from 'qs'
 import Cookies from 'js-cookie'
-axios.defaults.timeout = 30000;//响应时间
+axios.defaults.timeout = 15000;//响应时间
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';        //配置请求头
 // if (process.env.NODE_ENV === 'development') {
 //   axios.defaults.baseURL = '/api'
 // }
 axios.create({
   // 设置超时时间
-  timeout: 60000
+  timeout: 15000
 })
-axios.defaults.headers.Authorization = localStorage['token'] || null
+axios.defaults.headers.Authorization = Cookies.get('access_token') || null
 axios.interceptors.request.use(function (config) {
   // Do something before request is sent
-  config.headers['x-csrf-token'] = Cookies.get('csrfToken')
+  config.headers['x-csrf-token'] = Cookies.get('access_token')
   //在发送请求之前做某件事
-  console.log('config=>',config)
   if (config.method === 'post' && config.url!=='/api/f/uploadResume') {
     config.data = qs.stringify(config.data);
   }
@@ -27,21 +27,26 @@ axios.interceptors.request.use(function (config) {
 })
 // 在这里对返回的数据进行处理
 // 在这里添加你自己的逻辑
-// axios.interceptors.response.use(res => {
-//   return res.data
-// }, error => {
-//   if (error.response.status === 401) {
-//     var timer = setTimeout(() => {
-//       router.replace({
-//         path: '/login'
-//       })
-//       clearTimeout(timer)
-//     }, 3000);
+axios.interceptors.response.use(res => {
+  let data= res.data
+  if(data.code!=200){
+    message.error(data.msg)
+    return Promise.reject(data.msg)
+  }
+  return data
+}, error => {
+  if (error.response.status === 401) {
+    var timer = setTimeout(() => {
+      router.replace({
+        path: '/login'
+      })
+      clearTimeout(timer)
+    }, 3000);
 
-//   } else {
-//     return Promise.reject(error)
-//   }
-// })
+  } else {
+    return Promise.reject(error)
+  }
+})
 export function uploadFile(url,formData) {
   return axios.post(url, formData,
     { headers: { 'Content-Type': 'multipart/form-data' } })

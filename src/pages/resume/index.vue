@@ -1,13 +1,13 @@
 <template>
   <div>
-
+ResumeList
   </div>
 </template>
 
 <script>
 import { ref, toRefs, reactive } from "vue";
 export default {
-  name: "AdminList",
+  name: "ResumeList",
   setup() {
     const state = reactive({});
     return {

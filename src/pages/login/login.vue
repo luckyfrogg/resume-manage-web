@@ -56,8 +56,8 @@
 </template>
 <script>
 import { doLogin } from "@/api/login";
-import md5 from 'js-md5';
-import { ref, unref, toRefs, reactive, computed, onMounted } from "vue";
+import { encriptPass,encryptVal,decryptVal } from "@/utils/tools";
+import { ref, unref, toRefs, reactive, computed, onMounted,getCurrentInstance } from "vue";
 import {
   UserOutlined,
   LockOutlined,
@@ -72,9 +72,11 @@ export default {
     CheckOutlined,
     CloseOutlined
   },
-  setup(props, conetxt) {
+  setup(props, context) {
+    const { ctx } = getCurrentInstance();
     onMounted(() => {
       // 在渲染完成后, 这个 div DOM 会被赋值给 root ref 对象
+      console.log('message=>',getCurrentInstance())
       console.log(loginRef.value); // <div/>
     });
     const loginRef = ref(null);
@@ -136,20 +138,27 @@ export default {
         .validate()
         .then(async ruleForm => {
           state.loadingStatus = 1;
-          console.log("ruleForm=>", ruleForm);
-        //   let md5pass = md5
-          let loginRes = await doLogin()
+          let encriptPassword = encriptPass(ruleForm.password);
+          let params = {
+            name: ruleForm.name,
+            password: encriptPassword
+          };
+          let loginRes = await doLogin(params)
             .then(res => {
+              ctx.$message.success(res.msg)
+              ctx.$cookies.set('access_token', res.data.accessToken, { expires: 1 });
+              ctx.$cookies.set('role', encryptVal(res.data.role), { expires: 1 });
               state.loadingStatus = 2;
             })
             .catch(err => {
-              state.loadingStatus = 3;
+              state.loadingStatus = 0;
             });
           setTimeout(() => {
             state.loadingStatus = 0;
           }, 1800);
         })
         .catch(error => {
+            state.loadingStatus = 0;
           console.log("error", error);
         });
 
