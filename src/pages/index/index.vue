@@ -5,7 +5,7 @@
 <script>
 import { ref, toRefs, reactive } from "vue";
 export default {
-  name: "",
+  name: "Index",
   setup() {
     const state = reactive({});
     return {

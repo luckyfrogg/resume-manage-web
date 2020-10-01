@@ -58,6 +58,7 @@
 import { doLogin } from "@/api/login";
 import { encriptPass,encryptVal,decryptVal } from "@/utils/tools";
 import { ref, unref, toRefs, reactive, computed, onMounted,getCurrentInstance } from "vue";
+import { useStore } from "vuex";
 import {
   UserOutlined,
   LockOutlined,
@@ -74,6 +75,7 @@ export default {
   },
   setup(props, context) {
     const { ctx } = getCurrentInstance();
+    const store = useStore()
     onMounted(() => {
       // 在渲染完成后, 这个 div DOM 会被赋值给 root ref 对象
       console.log('message=>',getCurrentInstance())
@@ -138,16 +140,19 @@ export default {
         .validate()
         .then(async ruleForm => {
           state.loadingStatus = 1;
-          let encriptPassword = encriptPass(ruleForm.password);
+          let encryptPassword = encriptPass(ruleForm.password);
           let params = {
             name: ruleForm.name,
-            password: encriptPassword
+            password: encryptPassword
           };
           let loginRes = await doLogin(params)
             .then(res => {
               ctx.$message.success(res.msg)
+              let encryptRole=encryptVal(res.data.role)
               ctx.$cookies.set('access_token', res.data.accessToken, { expires: 1 });
-              ctx.$cookies.set('role', encryptVal(res.data.role), { expires: 1 });
+              ctx.$cookies.set('role', encryptRole, { expires: 1 });
+              store.dispatch('setMenuList',encryptRole)
+              
               state.loadingStatus = 2;
             })
             .catch(err => {

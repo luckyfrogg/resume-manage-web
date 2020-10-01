@@ -5,21 +5,73 @@
         <span>简历管理系统</span>
       </router-link>
     </div>
+    <div class="menu-container">
+      <a-menu mode="inline" theme="dark" :inline-collapsed="collapse" v-model:openKeys="openKeys"
+      v-model:selectedKeys="selectedKeys"  @click="handleClickMenuItem">
+        <template v-for="item in menus">
+          <a-menu-item v-if="!item.children" :key="item.name" :data-key="item.name">
+            <!-- <a-icon :type="item.icon" /> -->
+            <span>{{item.title}}</span>
+          </a-menu-item>
+          <a-sub-menu v-else :menu-info="item" :key="item.name" :data-key="item.name">
+            <template v-slot:title>
+              <!-- <a-icon :type="item.icon" /> -->
+              <span>{{item.title}}</span>
+            </template>
+            <a-menu-item-group v-for="sub_item in item.children" :key="sub_item.name">
+              <!-- <a-icon :type="sub_item.icon" /> -->
+              <a-menu-item :key="sub_item.name">{{sub_item.title}}</a-menu-item>
+            </a-menu-item-group>
+          </a-sub-menu>
+        </template>
+      </a-menu>
+    </div>
   </div>
 </template>
 
 <script>
-import { ref, toRefs, computed, reactive, provide, inject } from "vue";
+import {
+  ref,
+  toRefs,
+  computed,
+  reactive,
+  provide,
+  inject,
+  getCurrentInstance
+} from "vue";
+import { menuList } from "@/config/menu";
+import { filterMenuList } from "@/utils/handleRoutes";
+import { decryptVal } from "@/utils/tools";
 import { useStore } from "vuex";
+import { useRoute, useRouter } from 'vue-router'
 export default {
   name: "SideBar",
 
   setup() {
     const store = useStore();
-    const state = reactive({});
+    const { ctx } = getCurrentInstance();
+    let role = ctx.$cookies.get("role");
+ // 获取当前路由
+    const route = useRoute()
+    // 获取路由实例
+    const router = useRouter()
+    const state = reactive({
+      openKeys:[],
+      selectedKeys:[]
+    });
+    const menus = ref(filterMenuList(menuList, decryptVal(role)));
+    state.openKeys = [route.name.split("-")[0]];
+    state.selectedKeys = [route.name];
+    debugger
     const collapse = computed(() => store.state.collapse);
+    function handleClickMenuItem(){
+
+    }
+    // debugger
     return {
       collapse,
+      menus,
+      handleClickMenuItem,
       ...toRefs(state)
     };
   }

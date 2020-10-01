@@ -1,20 +1,20 @@
 import Layout from "@/layouts";
+import SubLayout from '@/layouts/subLayout.vue'
 export const constantRoutes = [
   {
     path: "/login",
     component: () => import("@/pages/login/login"),
     hidden: true,
     meta: {
-      title: '登录',
-      requireAuth: false,
+      title: '登录'
     }
   },
 ]
 export const asyncRoutes = [
   {
     path: '/',
-    component: Layout,
-    redirect: 'index',
+    redirect: '/index',
+    component:Layout,
     children: [
       {
         path: "index",
@@ -23,17 +23,17 @@ export const asyncRoutes = [
         meta: {
           title: "首页",
           icon: "home",
-          affix: true,
           permissions: ['admin', 'superadmin']
         },
       },
+
     ],
   },
   {
     path: '/admin',
     name: "Admin",
     component: Layout,
-    redirect: 'list',
+    redirect: { path: '/admin/list' },
     meta: {
       title: "用户管理",
       permissions: ["superAdmin"],
@@ -41,11 +41,13 @@ export const asyncRoutes = [
     children: [{
       path: 'list',
       name: 'AdminList',
+      // component: Layout,
       component: () => import("@/pages/admin/index"),
       meta: {
         title: "用户管理列表",
         permissions: ["superAdmin"],
       }
+
     }
     ]
   },
@@ -76,7 +78,7 @@ export const asyncRoutes = [
     redirect: 'list',
     meta: {
       title: "面试安排管理",
-      permissions: ["superAdmin","admin"],
+      permissions: ["superAdmin", "admin"],
     },
     children: [{
       path: 'list',
@@ -84,9 +86,10 @@ export const asyncRoutes = [
       component: () => import("@/pages/interview/index"),
       meta: {
         title: "面试安排列表",
-        permissions: ["superAdmin","admin"],
+        permissions: ["superAdmin", "admin"],
       }
     }
     ]
   }
+
 ]

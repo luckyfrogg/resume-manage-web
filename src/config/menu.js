@@ -23,7 +23,7 @@ export const menuList = [
     },
     {
         title: "面试安排管理",
-        name: "resume",
+        name: "interview",
         icon: "NodeIndexOutlined",
         permissions: ["superadmin",'admin'],
         children: [{
