@@ -59,6 +59,7 @@ import { doLogin } from "@/api/login";
 import { encriptPass,encryptVal,decryptVal } from "@/utils/tools";
 import { ref, unref, toRefs, reactive, computed, onMounted,getCurrentInstance } from "vue";
 import { useStore } from "vuex";
+import { useRoute, useRouter } from 'vue-router'
 import {
   UserOutlined,
   LockOutlined,
@@ -76,6 +77,7 @@ export default {
   setup(props, context) {
     const { ctx } = getCurrentInstance();
     const store = useStore()
+    let router = useRouter()
     onMounted(() => {
       // 在渲染完成后, 这个 div DOM 会被赋值给 root ref 对象
       console.log('message=>',getCurrentInstance())
@@ -152,7 +154,7 @@ export default {
               ctx.$cookies.set('access_token', res.data.accessToken, { expires: 1 });
               ctx.$cookies.set('role', encryptRole, { expires: 1 });
               store.dispatch('setMenuList',encryptRole)
-              
+              router.push('/admin')
               state.loadingStatus = 2;
             })
             .catch(err => {
