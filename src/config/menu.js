@@ -1,34 +1,35 @@
 export const menuList = [
     {
         title: "用户管理",
-        name: "user",
+        name: "Admin",
         icon: "UserOutlined",
         permissions: ["superadmin"],
         children: [{
             title: "用户列表",
-            name: 'user-list',
+            name: 'AdminList',
+            path:'',
             permissions: ["superadmin"],
         }]
     },
     {
         title: "简历管理",
-        name: "resume",
+        name: "Resume",
         icon: "SolutionOutlined",
         permissions: ["superadmin",'admin'],
         children: [{
             title: "简历列表",
-            name: 'resume-list',
+            name: 'ResumeList',
             permissions: ["superadmin","admin"],
         }]
     },
     {
         title: "面试安排管理",
-        name: "interview",
+        name: "Interview",
         icon: "NodeIndexOutlined",
         permissions: ["superadmin",'admin'],
         children: [{
             title: "面试安排列表",
-            name: 'interview-list',
+            name: 'InterviewList',
             permissions: ["superadmin","admin"],
         }]
     }

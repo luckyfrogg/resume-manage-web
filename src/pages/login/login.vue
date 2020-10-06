@@ -154,7 +154,7 @@ export default {
               ctx.$cookies.set('access_token', res.data.accessToken, { expires: 1 });
               ctx.$cookies.set('role', encryptRole, { expires: 1 });
               store.dispatch('setMenuList',encryptRole)
-              router.push('/admin')
+              router.replace('/')
               state.loadingStatus = 2;
             })
             .catch(err => {

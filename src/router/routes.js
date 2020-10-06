@@ -13,19 +13,9 @@ export const constantRoutes = [
 export const asyncRoutes = [
   {
     path: '/',
-    redirect: '/index',
-    component:Layout,
+    redirect: '/resume',
+    component: Layout,
     children: [
-      {
-        path: "index",
-        name: "Index",
-        component: () => import("@/pages/index/index"),
-        meta: {
-          title: "首页",
-          icon: "home",
-          permissions: ['admin', 'superadmin']
-        },
-      },
 
     ],
   },
@@ -33,10 +23,10 @@ export const asyncRoutes = [
     path: '/admin',
     name: "Admin",
     component: Layout,
-    redirect: { path: '/admin/list' },
+    redirect: { name: 'AdminList' },
     meta: {
       title: "用户管理",
-      permissions: ["superAdmin"],
+      permissions: ["superadmin"],
     },
     children: [{
       path: 'list',
@@ -45,9 +35,8 @@ export const asyncRoutes = [
       component: () => import("@/pages/admin/index"),
       meta: {
         title: "用户管理列表",
-        permissions: ["superAdmin"],
+        permissions: ["superadmin"],
       }
-
     }
     ]
   },
@@ -55,18 +44,18 @@ export const asyncRoutes = [
     path: '/resume',
     name: "Resume",
     component: Layout,
-    redirect: 'list',
+    redirect: { name: 'ResumeList' },
     meta: {
       title: "简历管理",
-      permissions: ["admin", "superAdmin"],
+      permissions: ["admin", "superadmin"],
     },
     children: [{
       path: 'list',
-      name: 'AdminList',
+      name: 'ResumeList',
       component: () => import("@/pages/resume/index"),
       meta: {
         title: "简历列表",
-        permissions: ["admin", "superAdmin"],
+        permissions: ["admin", "superadmin"],
       }
     }
     ]
@@ -75,10 +64,10 @@ export const asyncRoutes = [
     path: '/interview',
     name: "Interview",
     component: Layout,
-    redirect: 'list',
+    redirect: { name: 'InterviewList' },
     meta: {
       title: "面试安排管理",
-      permissions: ["superAdmin", "admin"],
+      permissions: ["superadmin", "admin"],
     },
     children: [{
       path: 'list',
@@ -86,7 +75,7 @@ export const asyncRoutes = [
       component: () => import("@/pages/interview/index"),
       meta: {
         title: "面试安排列表",
-        permissions: ["superAdmin", "admin"],
+        permissions: ["superadmin", "admin"],
       }
     }
     ]

@@ -1,7 +1,7 @@
 <template>
   <div class="nav-bar-container">
     <div class="nav-bar-wrapper">
-      <a-button @click="toggleCollapse">折叠</a-button>
+      <!-- <a-button @click="toggleCollapse">折叠</a-button> -->
       <section class="breadcrumb-container">面包屑</section>
       <div>个人中心</div>
     </div>

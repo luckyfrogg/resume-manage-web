@@ -6,8 +6,15 @@
       </router-link>
     </div>
     <div class="menu-container">
-      <a-menu mode="inline" theme="dark" :inline-collapsed="collapse" v-model:openKeys="openKeys"
-      v-model:selectedKeys="selectedKeys"  @click="handleClickMenuItem">
+      <a-menu
+        mode="inline"
+        :inline-collapsed="collapse"
+        v-model:openKeys="openKeys"
+        v-model:selectedKeys="selectedKeys"
+        v-model:defaultOpenKeys="openKeys"
+        v-model:defaultSelectedKeys="selectedKeys"
+        @click="handleClickMenuItem"
+      >
         <template v-for="item in menus">
           <a-menu-item v-if="!item.children" :key="item.name" :data-key="item.name">
             <!-- <a-icon :type="item.icon" /> -->
@@ -43,7 +50,7 @@ import { menuList } from "@/config/menu";
 import { filterMenuList } from "@/utils/handleRoutes";
 import { decryptVal } from "@/utils/tools";
 import { useStore } from "vuex";
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter } from "vue-router";
 export default {
   name: "SideBar",
 
@@ -51,21 +58,26 @@ export default {
     const store = useStore();
     const { ctx } = getCurrentInstance();
     let role = ctx.$cookies.get("role");
- // 获取当前路由
-    const route = useRoute()
+    // 获取当前路由
+    const route = useRoute();
     // 获取路由实例
-    const router = useRouter()
+    const router = useRouter();
     const state = reactive({
-      openKeys:[],
-      selectedKeys:[]
+      openKeys: [],
+      selectedKeys: []
     });
     const menus = ref(filterMenuList(menuList, decryptVal(role)));
-    state.openKeys = [route.name.split("-")[0]];
+    console.log('route=>',route)
+    state.openKeys = [route.matched[0].name];
     state.selectedKeys = [route.name];
-    debugger
+    // debugger
+    console.log(state.openKeys,state.selectedKeys)
     const collapse = computed(() => store.state.collapse);
-    function handleClickMenuItem(){
-
+    function handleClickMenuItem({ item, key, keyPath }) {
+      // console.log(item, key, keyPath);
+      state.openKeys = keyPath.length > 1 ? [keyPath[1]] : [keyPath[0]];
+      state.selectedKeys = [keyPath[0]];
+      router.push({ name: keyPath[0] });
     }
     // debugger
     return {
