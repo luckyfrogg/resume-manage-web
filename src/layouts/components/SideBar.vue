@@ -1,7 +1,7 @@
 <template>
   <div class="side-bar-container" :class="{'is-collapse':collapse}">
     <div class="logo-container">
-      <router-link to="/index">
+      <router-link to="/">
         <span>简历管理系统</span>
       </router-link>
     </div>
@@ -14,6 +14,7 @@
         v-model:defaultOpenKeys="openKeys"
         v-model:defaultSelectedKeys="selectedKeys"
         @click="handleClickMenuItem"
+        class="menu-list"
       >
         <template v-for="item in menus">
           <a-menu-item v-if="!item.children" :key="item.name" :data-key="item.name">
@@ -67,11 +68,11 @@ export default {
       selectedKeys: []
     });
     const menus = ref(filterMenuList(menuList, decryptVal(role)));
-    console.log('route=>',route)
+    console.log("route=>", route);
     state.openKeys = [route.matched[0].name];
     state.selectedKeys = [route.name];
     // debugger
-    console.log(state.openKeys,state.selectedKeys)
+    console.log(state.openKeys, state.selectedKeys);
     const collapse = computed(() => store.state.collapse);
     function handleClickMenuItem({ item, key, keyPath }) {
       // console.log(item, key, keyPath);
@@ -99,14 +100,13 @@ export default {
   width: 256px;
   height: 100vh;
   overflow: hidden;
-  background: #001529;
+  background: @themeColor;
   box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
   transition: width 0.2s;
   color: rgba(255, 255, 255, 0.95);
   .logo-container {
     position: relative;
     overflow: hidden;
-    background: #001529;
     height: 75px;
     line-height: 75px;
     text-align: center;
@@ -123,6 +123,32 @@ export default {
         white-space: nowrap;
         vertical-align: middle;
         max-width: calc(256px - 60px);
+      }
+    }
+  }
+  .menu-container {
+    .menu-list {
+      background: transparent;
+      border-right: 1px solid transparent;
+      ::v-deep(.ant-menu-item-group-title) {
+        padding: 0;
+      }
+      .ant-menu-item {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+      ::v-deep(.ant-menu-submenu-arrow){
+        &::before,
+        &::after
+        {
+          background-image: none !important;
+          background: #fff !important;
+        }
+        
+      }
+      span,
+      i {
+        color: #fff;
       }
     }
   }

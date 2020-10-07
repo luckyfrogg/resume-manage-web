@@ -34,7 +34,7 @@ export const asyncRoutes = [
       // component: Layout,
       component: () => import("@/pages/admin/index"),
       meta: {
-        title: "用户管理列表",
+        title: "用户列表",
         permissions: ["superadmin"],
       }
     }

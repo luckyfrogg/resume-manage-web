@@ -1,6 +1,6 @@
 <template>
-  <div>
-aaa
+  <div class="admin-container">
+    
   </div>
 </template>
 
@@ -11,7 +11,7 @@ export default {
   setup() {
     const state = reactive({});
     return {
-      ...toRefs(state)
+      state
     };
   }
 };
