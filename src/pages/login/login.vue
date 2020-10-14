@@ -62,7 +62,7 @@ import { useStore } from "vuex";
 import { useRoute, useRouter } from 'vue-router'
 import {
   UserOutlined,
-  LockOutlined,
+  LockOutlined, 
   CheckOutlined,
   CloseOutlined
 } from "@ant-design/icons-vue";
@@ -242,16 +242,16 @@ export default {
         border: 1px solid transparent;
         border-radius: 2px;
       }
-      ::v-deep .ant-form-explain {
+      ::v-deep(.ant-form-explain) {
         position: absolute;
         margin-top: 2px;
       }
-      ::v-deep .has-error {
+      ::v-deep(.has-error) {
         .ant-input-affix-wrapper {
           border: 1px solid #f5222d;
         }
       }
-      ::v-deep input {
+      ::v-deep(input) {
         height: 58px;
         padding-left: 45px;
         font-size: 14px;

@@ -5,12 +5,8 @@
       <section class="breadcrumb-container">
         <a-breadcrumb>
           <a-breadcrumb-item v-for="item in breadcrumbList" :key="item.key">
-            <router-link :to="item.path" v-if="item.path!==null">
-              {{item.title}}
-            </router-link>
-            <template v-else>
-              {{item.title}}
-            </template>
+            <router-link :to="item.path" v-if="item.path!==null">{{item.title}}</router-link>
+            <template v-else>{{item.title}}</template>
           </a-breadcrumb-item>
         </a-breadcrumb>
       </section>
@@ -21,7 +17,7 @@
 
 <script>
 import { useStore } from "vuex";
-import { ref, toRefs, reactive, provide, inject } from "vue";
+import { ref, toRefs, reactive, provide, inject, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 export default {
   name: "NavBar",
@@ -32,20 +28,28 @@ export default {
     // 获取路由实例
     const router = useRouter();
     const state = reactive({
-      breadcrumbList:[]
+      breadcrumbList: []
     });
-    console.log('matched=>',route.matched)
-    route.matched.forEach((item,index,arr)=>{
-      state.breadcrumbList.push({
-        key:item.name+index,
-        title:item.meta.title,
-        path:index===arr.length-1?null:item.path,
-        name:item.name
-      })
-    })
-    console.log(state.breadcrumbList)
+    console.log("matched=>", route.matched);
+    getBreadCrumbList()
+    watch(route, (newValue, oldValue) => {
+      //监听route变化处理面包屑
+      getBreadCrumbList()
+    });
+    console.log(state.breadcrumbList);
     function toggleCollapse() {
       store.commit("toggleCollapse");
+    }
+    function getBreadCrumbList(){
+      state.breadcrumbList = [];
+      route.matched.forEach((item, index, arr) => {
+        state.breadcrumbList.push({
+          key: item.name + index,
+          title: item.meta.title,
+          path: index === arr.length - 1 ? null : item.path,
+          name: item.name
+        });
+      });
     }
     return {
       ...toRefs(state),
@@ -64,11 +68,11 @@ export default {
   user-select: none;
   background: #fff;
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
-  .nav-bar-wrapper{
+  .nav-bar-wrapper {
     height: 60px;
     display: flex;
     align-items: center;
-    .personal-center-container{
+    .personal-center-container {
       margin-left: auto;
     }
   }

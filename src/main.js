@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import Antd,{message} from 'ant-design-vue';
 import Cookies from 'js-cookie'
+import '@/assets/iconfont/iconfont.css'
 import 'ant-design-vue/dist/antd.css';
 import '@/assets/style/common.less'
 import '@/assets/style/reset.less'

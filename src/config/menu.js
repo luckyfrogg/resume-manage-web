@@ -2,7 +2,7 @@ export const menuList = [
     {
         title: "用户管理",
         name: "Admin",
-        icon: "UserOutlined",
+        icon: "re-account",
         permissions: ["superadmin"],
         children: [{
             title: "用户列表",
@@ -14,7 +14,7 @@ export const menuList = [
     {
         title: "简历管理",
         name: "Resume",
-        icon: "SolutionOutlined",
+        icon: "re-image-text",
         permissions: ["superadmin",'admin'],
         children: [{
             title: "简历列表",
@@ -25,7 +25,7 @@ export const menuList = [
     {
         title: "面试安排管理",
         name: "Interview",
-        icon: "NodeIndexOutlined",
+        icon: "re-manage-order",
         permissions: ["superadmin",'admin'],
         children: [{
             title: "面试安排列表",

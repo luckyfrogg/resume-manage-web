@@ -19,11 +19,13 @@
         <template v-for="item in menus">
           <a-menu-item v-if="!item.children" :key="item.name" :data-key="item.name">
             <!-- <a-icon :type="item.icon" /> -->
+            
             <span>{{item.title}}</span>
           </a-menu-item>
           <a-sub-menu v-else :menu-info="item" :key="item.name" :data-key="item.name">
             <template v-slot:title>
               <!-- <a-icon :type="item.icon" /> -->
+              <span class="icon menu-icon" :class="item.icon"></span>
               <span>{{item.title}}</span>
             </template>
             <a-menu-item-group v-for="sub_item in item.children" :key="sub_item.name">
@@ -52,9 +54,18 @@ import { filterMenuList } from "@/utils/handleRoutes";
 import { decryptVal } from "@/utils/tools";
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
+// import {
+//   UserOutlined,
+//   SolutionOutlined,
+//   NodeIndexOutlined,
+// } from "@ant-design/icons-vue";
 export default {
   name: "SideBar",
-
+  // components:{
+  //   UserOutlined,
+  //   SolutionOutlined,
+  //   NodeIndexOutlined
+  // },
   setup() {
     const store = useStore();
     const { ctx } = getCurrentInstance();
@@ -130,26 +141,44 @@ export default {
     .menu-list {
       background: transparent;
       border-right: 1px solid transparent;
+      .menu-icon{
+        padding-right: 6px;
+        font-size: 24px;
+      }
+      ::v-deep(.ant-menu-submenu-title){
+        display: flex;
+        align-items: center;
+        font-size: 16px;
+      }
       ::v-deep(.ant-menu-item-group-title) {
         padding: 0;
       }
       .ant-menu-item {
+        font-size: 16px;
         margin-top: 0;
         margin-bottom: 0;
+        &:hover{
+          background-color: #e6f7ff;
+              color: #1890ff;
+        }
       }
-      ::v-deep(.ant-menu-submenu-arrow){
+      ::v-deep(.ant-menu-submenu-arrow) {
         &::before,
-        &::after
-        {
+        &::after {
           background-image: none !important;
           background: #fff !important;
         }
-        
       }
       span,
       i {
         color: #fff;
       }
+    }
+  }
+  ::v-deep(.ant-menu-submenu) {
+    & > .ant-menu {
+      background-color: transparent;
+      color: #fff;
     }
   }
 }
